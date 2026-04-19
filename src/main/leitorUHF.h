@@ -1,0 +1,1 @@
+// Codigo de definicao da classe do leitor RFID. Deve, principalmente, conter a funcao de leitura do RFID.
