@@ -17,6 +17,10 @@ class LeitorUHF {
     // Variaveis internas, como ponteiro de comunicacao serial, buffer de leitura, etc.
         HardwareSerial *_serial;
         uint8_t _buffer[RX_BUFFER_LENGTH] = {0};
+        bool dataAvailable();
+        bool dataValid();
+        bool receiveData(unsigned long timeOut = 250); // Timeout de 250ms para leitura dos dados do serial
+        uint8_t calculateCheckSum(uint8_t *buffer);
 
     public:
     // O que o usuario pode usar, como a funcao de leitura do RFID
@@ -25,7 +29,6 @@ class LeitorUHF {
         // Inicializacao da comunicacao serial, com parametros padrao para o Serial2 do ESP32
         void loop();
         void poll();
-        bool dataAvailable();
         void dumpUIDToSerial();
 
     // Estrutura do frame de comunicação    
