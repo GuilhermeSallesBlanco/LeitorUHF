@@ -14,10 +14,6 @@ bool LeitorUHF::begin(HardwareSerial *serial, int baud, uint8_t rxPin, uint8_t t
     return true;
 }
 
-void LeitorUHF::loop(){
-    // Processo de loop, integração do processo de leitura do RFID (poll, disponibilidade de dados, leitura pro buffer, etc.)
-}
-
 void LeitorUHF::poll(){
     // Processo de envio de frame para solicitar uma única leitura do RFID
     uint8_t frame[7] = {0};
@@ -94,4 +90,8 @@ uint8_t LeitorUHF::calculateCheckSum(uint8_t *buffer){
         soma += buffer[i];
     }
     return (soma & 0xFF); // Retorna o LSB da soma
+}
+
+void LeitorUHF::loop(){
+    // Processo de loop, integração do processo de leitura do RFID (poll, disponibilidade de dados, leitura pro buffer, etc.)
 }
