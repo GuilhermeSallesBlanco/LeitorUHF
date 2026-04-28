@@ -92,6 +92,33 @@ uint8_t LeitorUHF::calculateCheckSum(uint8_t *buffer){
     return (soma & 0xFF); // Retorna o LSB da soma
 }
 
+void LeitorUHF::dumpUIDToSerial(){
+    // Função para imprimir o UID da tag lida
+    Serial.print("0x");
+    for(uint8_t i=0; i<12; i++){
+        Serial.print(uid[i] < 0x10 ? "0" : "");
+        Serial.print(uid[i], HEX);
+    }
+    Serial.println();
+}
+
 void LeitorUHF::loop(){
-    // Processo de loop, integração do processo de leitura do RFID (poll, disponibilidade de dados, leitura pro buffer, etc.)
+    if(dataAvailable()){
+        if(receiveData()){
+            if(dataValid()){
+                switch(_buffer[2]){ // buffer[2] é frame[2], que deve ser o Command do frame recebido
+                    case CMD_SinglePollInstruction:
+                        if(memcmp(uid, &_buffer[9], 12) != 0){
+                            memcpy(uid, &_buffer[9], 12);
+                            Serial.print("Tag lida: ");
+                            dumpUIDToSerial();
+                        } else {
+                            Serial.println("Tag continua presente: ");
+                            dumpUIDToSerial();
+                        }
+                        break;
+                }
+            } 
+        }
+    }
 }

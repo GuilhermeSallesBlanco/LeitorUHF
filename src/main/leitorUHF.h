@@ -19,12 +19,13 @@ class LeitorUHF {
         uint8_t _buffer[RX_BUFFER_LENGTH] = {0};
         bool dataAvailable();
         bool dataValid();
-        bool receiveData(unsigned long timeOut = 250); // Timeout de 250ms para leitura dos dados do serial
+        bool receiveData(unsigned long timeOut = 500); // Timeout de 500ms para leitura dos dados do serial
         uint8_t calculateCheckSum(uint8_t *buffer);
 
     public:
     // O que o usuario pode usar, como a funcao de leitura do RFID
         LeitorUHF();
+        uint8_t uid[12] = {0}; // Buffer para armazenar o UID da tag lida
         bool begin(HardwareSerial *serial = &Serial2, int baud = 115200, uint8_t rxPin = 16, uint8_t txPin = 17); 
         // Inicializacao da comunicacao serial, com parametros padrao para o Serial2 do ESP32
         void loop();
