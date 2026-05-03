@@ -110,6 +110,9 @@ void LeitorUHF::loop(){
                     case CMD_SinglePollInstruction:
                         if(memcmp(uid, &_buffer[9], 12) != 0){
                             memcpy(uid, &_buffer[9], 12);
+                            // array[x] = uid + permissão + horário lido
+                            // array de structs?
+                            // colocar permissões/nome dentro de uma struct?
                             Serial.print("Tag lida: ");
                             dumpUIDToSerial();
                         } else {
