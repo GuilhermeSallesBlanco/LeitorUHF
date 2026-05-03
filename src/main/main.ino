@@ -5,6 +5,10 @@
   // Chamar uma funcao para carregar o codigo HTML (verificar)
 
 #include "leitorUHF.h"
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <UrlEncode.h>
+#include <WebServer.h>
 
 unsigned long lastPollTime = 0;
 LeitorUHF leitorUHF;

@@ -21,6 +21,7 @@ class LeitorUHF {
         bool dataValid();
         bool receiveData(unsigned long timeOut = 500); // Timeout de 500ms para leitura dos dados do serial
         uint8_t calculateCheckSum(uint8_t *buffer);
+        const uint8_t blankUid[12] = {0}; // Buffer para comparação quando não há tag lida, indicando que o UID "sumiu".
 
     public:
     // O que o usuario pode usar, como a funcao de leitura do RFID
