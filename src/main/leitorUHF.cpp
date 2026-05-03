@@ -121,9 +121,9 @@ void LeitorUHF::loop(){
                         switch(_buffer[ParamPos]){
                             case ERR_InventoryFail: // Erro quando não há tag lida. Serve para indicar tags que "sumiram".
                                 if(memcmp(uid, blankUid, sizeof uid) != 0){ // Se o UID atual for diferente do blankUid, significa que uma tag "sumiu".
-                                   memset(uid, 0, sizeof uid); // Limpa o buffer de UID para indicar que não há mais tag presente
-                                   Serial.println("Tag removida: "); // Isso está imprimindo apenas 0x0000000000... não está mostrando a tag correta.
+                                   Serial.println("Tag removida: ");
                                    dumpUIDToSerial(); 
+                                   memset(uid, 0, sizeof uid); // Limpa o buffer de UID para indicar que não há mais tag presente
                                    // Verificar se isso funciona com a nossa ideia, essa sendo de que devemos manter um controle de todas as tags presentes.
                                    // Só tem uma tag presente no buffer? Nós precisamos de um controle para múltiplas tags? Talvez seja necessário manter um array de UIDs para controlar múltiplas tags, e não apenas um buffer de UID.
                                 }
