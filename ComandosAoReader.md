@@ -4,6 +4,7 @@ Esta explicação veio do código de Playful Technology. Ela elabora em como que
 
 Commands sent to the reader, and responses received back, are sent as data frames, e.g.
 Header | Type | Command | ParamLength (2bytes) | Parameter(s) | Checksum | End
+
   AA   |  00  |   07    |      00 03           |   04 02 05   |    15    | DD
 
 Frames always start with the header value 0xAA
@@ -18,6 +19,7 @@ Frames always end with the tail value 0xDD
 
 Comandos enviados ao leitor, e respostas recebidas de volta, são enviados como data frames. Por exemplo:
 Header | Type | Command | ParamLength (2bytes) | Parameter(s) | Checksum | End
+
   AA   |  00  |   07    |      00 03           |   04 02 05   |    15    | DD
 
 Frames sempre começam com o valor haeder 0xAA
