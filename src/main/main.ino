@@ -4,6 +4,12 @@
   // Pedir leituras periodicas
   // Chamar uma funcao para carregar o codigo HTML (verificar)
 
+// TODO:
+  // Criar um array de structs para armazenar os UIDs lidos
+    // Struct de UID deve ter nome e permissão, pelo menos
+  // Fazer uma seleção de cenário (botão físico?) para escolher qual cenário usar (isso deve ser refletido no site)
+  // Definir permissões para cada cenário
+
 #include "leitorUHF.h"
 #include <WiFi.h>
 #include <HTTPClient.h>
