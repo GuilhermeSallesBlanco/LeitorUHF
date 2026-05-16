@@ -86,6 +86,7 @@ void loop() {
         Serial.print(" - Cargo: ");
         Serial.print(usuarios[i].cargo);
         Serial.println();
+        // Manda um sinal pro front end indicando que o usuário foi identificado, junto com o nome, cargo e permissão do usuário.
         break;
       }
     }
