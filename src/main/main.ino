@@ -30,7 +30,7 @@ Usuario usuarios[6] = {
 
   {
     // TAG 2
-    // Colocar UID lida aqui
+    .uid = {0x80, 0x69, 0x15, 0x00, 0x00, 0x40, 0x1D, 0x63, 0xE6, 0x70, 0x47, 0x7E},
     .nome = "Fernanda Rocha",
     .cargo = "Supervisor",
     .permissao = PERM_SUPERVISOR
@@ -38,7 +38,7 @@ Usuario usuarios[6] = {
 
   {
     // TAG 3
-    // Colocar UID lida aqui
+    .uid = {0x80, 0x69, 0x15, 0x00, 0x00, 0x50, 0x1D, 0x63, 0xE6, 0x74, 0x47, 0xA8},
     .nome = "Julio Mendes",
     .cargo = "Supervisor",
     .permissao = PERM_SUPERVISOR
@@ -46,7 +46,7 @@ Usuario usuarios[6] = {
 
   {
     // TAG 4
-    // Colocar UID lida aqui
+    .uid = {0x80, 0x69, 0x15, 0x00, 0x00, 0x50, 0x1D, 0x63, 0xE6, 0x78, 0x47, 0xED},
     .nome = "Ana Costa",
     .cargo = "Funcionário",
     .permissao = PERM_FUNCIONARIO
@@ -54,7 +54,7 @@ Usuario usuarios[6] = {
 
   {
     // TAG 5
-    // Colocar UID lida aqui
+    .uid = {0x80, 0x69, 0x15, 0x00, 0x00, 0x40, 0x1D, 0x63, 0xE6, 0x7C, 0x47, 0x3B},
     .nome = "Rafael Oliveira",
     .cargo = "Funcionário",
     .permissao = PERM_FUNCIONARIO
@@ -62,7 +62,7 @@ Usuario usuarios[6] = {
 
   {
     // TAG 6
-    // Colocar UID lida aqui
+    .uid = {0x80, 0x69, 0x15, 0x00, 0x00, 0x40, 0x1D, 0x63, 0xE6, 0x80, 0x47, 0x6D},
     .nome = "Visitante",
     .cargo = "Visitante",
     .permissao = PERM_VISITANTE
