@@ -32,6 +32,7 @@ class LeitorUHF {
         void loop();
         void poll();
         void dumpUIDToSerial();
+        bool novaLeitura = false;
 
     // Estrutura do frame de comunicação    
     enum EstruturaFrame : byte {
