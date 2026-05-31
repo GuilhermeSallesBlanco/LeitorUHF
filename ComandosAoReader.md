@@ -24,7 +24,7 @@ Header | Type | Command | ParamLength (2bytes) | Parameter(s) | Checksum | End
 
   AA   |  00  |   07    |      00 03           |   04 02 05   |    15    | DD
 
-Frames sempre começam com o valor haeder 0xAA
+Frames sempre começam com o valor header 0xAA
 Type indica um comando ao leitor (0x00), uma resposta (0x01), ou uma notificação (0x02) de volta do leitor
 Command é a instrução a ser realizada, ou a resposta daquela instrução
 ParamLength dá o número de parâmetros no frame, em 2 bytes (MSB -> LSB)

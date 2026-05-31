@@ -87,11 +87,13 @@ void loop() {
         Serial.print(usuarios[i].cargo);
         Serial.println();
         // Manda um sinal pro front end indicando que o usuário foi identificado, junto com o nome, cargo e permissão do usuário.
+        break;
       } else if (i == 5){
         Serial.print("Usuário desconhecido. UID lido: ");
         leitorUHF.dumpUIDToSerial();
         // Manda um sinal pro front end indicando que o usuário é desconhecido, junto com o UID lido.
-      } break;
+        break;
+      } 
     }
   }
   if(millis() - lastPollTime > 1000){
