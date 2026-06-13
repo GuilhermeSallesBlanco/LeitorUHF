@@ -1,23 +1,19 @@
-// Codigo principal do programa. Ele deve:
-  // Inicializar o leitor RFID
-  // Ficar rodando em um loop
-  // Pedir leituras periodicas
-  // Comparar tag lida com os usuários cadastrados
-  // Chamar uma funcao para carregar o codigo HTML (verificar)
-
-// TODO:
-  // Definir permissões para cada cenário
-  // Interação back end e front end
-
 #include "leitorUHF.h"
 #include "usuario.h"
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <UrlEncode.h>
 #include <WebServer.h>
+#include <LittleFS.h>
+
+const char* ssid = "TCCRede";
+const char* password = "12345678";
 
 unsigned long lastPollTime = 0;
 LeitorUHF leitorUHF;
+WebServer server(80);
+
+String ultimoUIDLido = "";
 
 Usuario usuarios[6] = {
   {
@@ -69,24 +65,127 @@ Usuario usuarios[6] = {
   }
 };
 
+void handleRoot(){
+  File file = LittleFS.open("/index.html", "r");
+
+  if(!file){
+    server.send(404, "text/plain", "index.html nao encontrado");
+    return;
+  }
+
+  server.streamFile(file, "text/html");
+  file.close();
+}
+
+void handleCSS(){
+  File file = LittleFS.open("/style.css", "r");
+  server.streamFile(file, "text/css");
+  file.close();
+}
+
+void handleScript(){
+  File file = LittleFS.open("/script.js", "r");
+  server.streamFile(file, "application/javascript");
+  file.close();
+}
+
+void handleDatabase(){
+  File file = LittleFS.open("/database.js", "r");
+  server.streamFile(file, "application/javascript");
+  file.close();
+}
+
+void handleRFIDAPI(){
+  File file = LittleFS.open("/rfid-api.js", "r");
+  server.streamFile(file, "application/javascript");
+  file.close();
+}
+
+void handleRFID() {
+  server.send(200, "text/plain", ultimoUIDLido);
+
+  // limpa após enviar
+  ultimoUIDLido = "";
+}
+
+String uidParaString(const uint8_t* uid) {
+  String resultado = "";
+
+  for (int i = 0; i < 12; i++) {
+    if (uid[i] < 16) {
+      resultado += "0";
+    }
+
+    resultado += String(uid[i], HEX);
+  }
+
+  resultado.toUpperCase();
+
+  return resultado;
+}
+
 void setup() {
   Serial.begin(115200); // Inicia o monitor serial
   leitorUHF.begin(&Serial2, 115200, 16, 17); // Inicia o leitor
+
+  if(!LittleFS.begin(true)){
+  Serial.println("Erro ao montar LittleFS");
+  return;
+  }
+
+  Serial.println("LittleFS montado");
+
+  File root = LittleFS.open("/");
+  File file = root.openNextFile();
+
+  Serial.println("Arquivos encontrados:");
+
+  while(file){
+  Serial.println(file.name());
+  file = root.openNextFile();
+  }
+
+  Serial.println();
+  Serial.println("Conectando ao Wifi...");
+
+  WiFi.begin(ssid, password);
+
+  while (WiFi.status() != WL_CONNECTED){
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println();
+  Serial.println("WiFi Conectado!");
+  Serial.println("IP: ");
+  Serial.println(WiFi.localIP());
+
+  server.on("/", handleRoot);
+  server.on("/style.css", handleCSS);
+  server.on("/script.js", handleScript);
+  server.on("/database.js", handleDatabase);
+  server.on("/rfid-api.js", handleRFIDAPI);
+  server.on("/rfid", handleRFID);
+
+  server.begin();
+
+  Serial.println("Servidor HTTP iniciado");
 }
 
 void loop() {
+  server.handleClient();
   leitorUHF.loop();
   if(leitorUHF.novaLeitura){
     leitorUHF.novaLeitura = false;
     Serial.println("Nova leitura detectada, comparando com usuários cadastrados...");
     for(int i = 0; i < 6; i++){
       if(compararUID(usuarios[i].uid, leitorUHF.uid)){
+        ultimoUIDLido = uidParaString(leitorUHF.uid);
         Serial.print("Usuário identificado: ");
         Serial.print(usuarios[i].nome);
         Serial.print(" - Cargo: ");
         Serial.print(usuarios[i].cargo);
         Serial.println();
-        // Manda um sinal pro front end indicando que o usuário foi identificado, junto com o nome, cargo e permissão do usuário.
         break;
       } else if (i == 5){
         Serial.print("Usuário desconhecido. UID lido: ");

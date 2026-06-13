@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>RFID Security Scan</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+
+
+
+
+    <!-- SIDEBAR DEV -->
+
+    <aside id="devSidebar" class="dev-sidebar">
+
+        <div class="dev-header">
+
+            <h2>DEV PANEL</h2>
+
+            <button id="closeSidebar">✕</button>
+
+        </div>
+
+
+
+
+
+        <div class="dev-content">
+
+            <!-- AUTO -->
+
+            <div class="dev-section">
+
+                <label class="checkbox-container">
+
+                    <input type="checkbox" id="autoSimulation">
+
+                    Simulação automática
+
+                </label>
+
+            </div>
+
+
+
+
+
+            <!-- MOCK -->
+
+            <div class="dev-section">
+
+                <h3>Adicionar funcionário</h3>
+
+                <select id="employeeSelect"></select>
+
+                <button id="addEmployeeButton">
+                    Simular Entrada
+                </button>
+
+            </div>
+
+
+
+
+
+            <!-- FERRAMENTAS -->
+
+            <div class="dev-section">
+
+                <h3>Ferramentas</h3>
+
+                <button id="clearConsoleButton">
+                    Limpar Console
+                </button>
+
+                <button id="clearEmployeesButton">
+                    Limpar Funcionários
+                </button>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+
+
+
+    <!-- CONTAINER -->
+
+    <div class="container">
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <div class="logo-area">
+
+                <div class="logo"></div>
+
+                <h1>RFID Security Scan</h1>
+
+            </div>
+
+
+
+
+
+            <div class="topbar-right">
+
+                <!-- CASOS -->
+
+                <div class="case-navigation">
+
+                    <button id="prevCaseButton">
+                        &larr;
+                    </button>
+
+                    <button id="nextCaseButton">
+                        &rarr;
+                    </button>
+
+                </div>
+
+
+
+
+
+                <!-- DEV -->
+
+                <button id="devButton" class="dev-button">
+                    DEV
+                </button>
+
+
+
+
+
+                <!-- TÍTULO -->
+
+                <div class="case-title">
+                    CASO 1
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <section class="system-status">
+
+            <div class="status-card">
+
+                <div class="status-title">
+                    STATUS DO SISTEMA
+                </div>
+
+                <div class="status-grid">
+
+                    <div class="status-item">
+                        <span class="status-label">ESP32</span>
+                        <span id="esp32Status" class="status-online">
+                            ONLINE
+                        </span>
+                    </div>
+
+                    <div class="status-item">
+                        <span class="status-label">RFID</span>
+                        <span id="rfidStatus" class="status-online">
+                            CONECTADO
+                        </span>
+                    </div>
+
+                    <div class="status-item">
+                        <span class="status-label">IP</span>
+                        <span id="esp32Ip">
+                            10.121.213.44
+                        </span>
+                    </div>
+
+                    <div class="status-item">
+                        <span class="status-label">Última leitura</span>
+                        <span id="lastReadTime">
+                            --
+                        </span>
+                    </div>
+
+                    <div class="status-item">
+                        <span class="status-label">Última tag</span>
+                        <span id="lastReadTag">
+                            Nenhuma
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- MAIN -->
+
+        <main class="main-content">
+
+            <!-- ESQUERDA -->
+
+            <section class="left-panel">
+
+                <div class="logs-container">
+
+                    <div id="logs"></div>
+
+                </div>
+
+            </section>
+
+
+
+
+
+            <!-- DIREITA -->
+
+            <section class="right-panel">
+
+                <div class="right-columns">
+
+                    <div class="active-column">
+
+                        <div class="active-title">
+                            FUNCIONÁRIOS ATIVOS
+                        </div>
+
+                        <div id="activeCards"
+                            class="active-cards">
+                        </div>
+
+                    </div>
+
+                    <div class="history-column">
+
+                        <div class="history-title">
+                            HISTÓRICO DE ACESSOS
+                        </div>
+
+                        <div id="historyContainer"
+                            class="history-container">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+
+
+    <script src="database.js"></script>
+
+    <script src="script.js"></script>
+
+    <script src="rfid-api.js"></script>
+
+</body>
+
+</html>
