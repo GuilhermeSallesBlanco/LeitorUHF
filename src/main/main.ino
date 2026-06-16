@@ -105,7 +105,7 @@ void handleRFID() {
   server.send(200, "text/plain", ultimoUIDLido);
 
   // limpa após enviar
-  ultimoUIDLido = "";
+  // ultimoUIDLido = "";
 }
 
 String uidParaString(const uint8_t* uid) {

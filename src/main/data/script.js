@@ -38,8 +38,6 @@ const lastReadTag = document.getElementById("lastReadTag");
 
 
 
-
-
 /*
 ===========================================
 ESTADO GLOBAL
@@ -50,6 +48,7 @@ let currentCaseIndex = 0;
 
 const activeEmployees = [];
 const accessHistory = [];
+const RFID_TIMEOUT = 5000; // 5 segundos
 
 let shouldAutoScrollEmployees = true;
 
@@ -398,14 +397,26 @@ PROCESSA RFID
 ===========================================
 */
 
-function processRFID(uid) {
+function processRFID(uid)
+{
+    console.log(
+        "PROCESSANDO RFID:",
+        uid,
+        new Date().toLocaleTimeString()
+    );
+    
+    console.log("RFID RECEBIDO:", uid);
 
-    const employee = employees.find(emp => emp.uid === uid);
+    const employee =
+        employees.find(emp => emp.uid === uid);
+
     updateSystemStatus(uid);
-    const currentCase = cases[currentCaseIndex];
 
-    if (!employee) {
+    const currentCase =
+        cases[currentCaseIndex];
 
+    if (!employee)
+    {
         addLog([
             `[ERRO] Tag desconhecida`,
             `[ERRO] UID ${uid}`
@@ -414,37 +425,36 @@ function processRFID(uid) {
         return;
     }
 
-    const allowed = employee.permissoes.includes(currentCase.id);
-    accessHistory.push({
+    const allowed =
+        employee.permissoes.includes(currentCase.id);
 
-        nome: employee.nome,
+    const existingEmployee =
+        activeEmployees.find(emp => emp.uid === employee.uid);
 
-        cargo: employee.cargo,
+    if (existingEmployee)
+    {
+        existingEmployee.lastSeen = Date.now();
 
-        zona: currentCase.nome,
+        console.log(
+            "PRESENÇA RENOVADA:",
+            employee.nome
+        );
 
-        allowed,
-
-        time: new Date()
-            .toLocaleTimeString()
-    });
-    const existingEmployee = activeEmployees.find(emp => emp.uid === employee.uid);
-
-    if (existingEmployee) {
-
-        addLog([
-            `[INFO] ${employee.nome} saiu de ${existingEmployee.currentZone}`,
-            `[INFO] Movimentação detectada`
-        ], "normal");
-
-        const index = activeEmployees.findIndex(emp => emp.uid === employee.uid);
-
-        activeEmployees.splice(index, 1);
+        return;
     }
 
+    console.log(
+        "NOVA ENTRADA:",
+        employee.nome
+    );
 
-
-
+    accessHistory.push({
+        nome: employee.nome,
+        cargo: employee.cargo,
+        zona: currentCase.nome,
+        allowed,
+        time: new Date().toLocaleTimeString()
+    });
 
     /*
     ===========================================
@@ -452,18 +462,18 @@ function processRFID(uid) {
     ===========================================
     */
 
-    if (currentCase.id === 1) {
-
-        if (allowed) {
-
+    if (currentCase.id === 1)
+    {
+        if (allowed)
+        {
             addLog([
                 `[MONITORAMENTO] ${employee.nome} identificado`,
                 `[CLP] Dados enviados com sucesso`,
                 `[CATRACA] Acesso liberado`
             ], "success");
-
-        } else {
-
+        }
+        else
+        {
             addLog([
                 `[MONITORAMENTO] ${employee.nome} sem autorização`,
                 `[CATRACA] Entrada negada`,
@@ -472,27 +482,23 @@ function processRFID(uid) {
         }
     }
 
-
-
-
-
     /*
     ===========================================
     CASO 2
     ===========================================
     */
 
-    else if (currentCase.id === 2) {
-
-        if (allowed) {
-
+    else if (currentCase.id === 2)
+    {
+        if (allowed)
+        {
             addLog([
                 `[MÁQUINA] ${employee.nome} autorizado`,
                 `[SENSOR] Máquina permanece ativa`
             ], "success");
-
-        } else {
-
+        }
+        else
+        {
             addLog([
                 `[RISCO] ${employee.nome} entrou sem autorização`,
                 `[CLP] Desligamento automático acionado`,
@@ -501,27 +507,23 @@ function processRFID(uid) {
         }
     }
 
-
-
-
-
     /*
     ===========================================
     CASO 3
     ===========================================
     */
 
-    else if (currentCase.id === 3) {
-
-        if (allowed) {
-
+    else if (currentCase.id === 3)
+    {
+        if (allowed)
+        {
             addLog([
                 `[TREINAMENTO] ${employee.nome} autorizado`,
                 `[SISTEMA] Acesso liberado`
             ], "success");
-
-        } else {
-
+        }
+        else
+        {
             addLog([
                 `[TREINAMENTO] Funcionário sem capacitação`,
                 `[CLP] Evento crítico registrado`,
@@ -530,35 +532,27 @@ function processRFID(uid) {
         }
     }
 
-
-
-
-
     /*
     ===========================================
     CASO 4
     ===========================================
     */
 
-    else if (currentCase.id === 4) {
-
+    else if (currentCase.id === 4)
+    {
         addLog([
             `[CAPACIDADE] ${employee.nome} entrou na área`,
             `[SENSOR] Total atual: ${activeEmployees.length + 1} funcionários`
         ], "normal");
 
-        if (activeEmployees.length + 1 > 3) {
-
+        if (activeEmployees.length + 1 > 3)
+        {
             addLog([
                 `[ALERTA] Limite de funcionários excedido`,
                 `[SEGURANÇA] Área acima da capacidade máxima`
             ], "error");
         }
     }
-
-
-
-
 
     /*
     ===========================================
@@ -574,7 +568,9 @@ function processRFID(uid) {
 
         currentZone: currentCase.nome,
 
-        startTime: allowed ? Date.now() : null
+        startTime: allowed ? Date.now() : null,
+
+        lastSeen: Date.now()
     });
 
     renderCards();
@@ -642,9 +638,6 @@ nextButton.addEventListener("click", nextCase);
 prevButton.addEventListener("click", previousCase);
 
 
-
-
-
 /*
 ===========================================
 INICIALIZAÇÃO
@@ -655,14 +648,44 @@ updateCaseTitle();
 
 addLog(cases[currentCaseIndex].descricao, "normal");
 
-setInterval(renderCards, 1000);
+setInterval(renderCards, 250);
 
 scrollConsoleToBottom();
 
 scrollEmployeesToBottom();
 
 
+function monitorEmployeePresence()
+{
+    const now = Date.now();
 
+    for(let i = activeEmployees.length - 1; i >= 0; i--)
+    {
+        const employee = activeEmployees[i];
+
+        if(now - employee.lastSeen > RFID_TIMEOUT)
+        {
+            addLog([
+                `[MONITORAMENTO] ${employee.nome} saiu da zona`,
+                `[RFID] Tag não detectada por ${RFID_TIMEOUT / 1000}s`
+            ], "normal");
+
+            accessHistory.push({
+                nome: employee.nome,
+                cargo: employee.cargo,
+                zona: employee.currentZone,
+                allowed: employee.allowed,
+                exited: true,
+                time: new Date().toLocaleTimeString()
+            });
+
+            activeEmployees.splice(i, 1);
+
+            renderCards();
+            renderHistory();
+        }
+    }
+}
 
 
 /*
@@ -739,6 +762,7 @@ function monitorConnection()
 }
 
 setInterval(monitorConnection, 1000);
+setInterval(monitorEmployeePresence, 500);
 
 function renderHistory()
 {
@@ -754,6 +778,25 @@ function renderHistory()
 
         item.classList.add("history-item");
 
+        let statusClass = "";
+        let statusText = "";
+
+        if(entry.exited)
+        {
+            statusClass = "status-neutral";
+            statusText = "SAIU";
+        }
+        else if(entry.allowed)
+        {
+            statusClass = "status-approved";
+            statusText = "AUTORIZADO";
+        }
+        else
+        {
+            statusClass = "status-denied";
+            statusText = "NEGADO";
+        }
+
         item.innerHTML = `
 
             <div class="history-time">
@@ -764,14 +807,8 @@ function renderHistory()
                 ${entry.nome}
             </div>
 
-            <div class="
-                ${entry.allowed
-                    ? "status-approved"
-                    : "status-denied"}
-            ">
-                ${entry.allowed
-                    ? "AUTORIZADO"
-                    : "NEGADO"}
+            <div class="${statusClass}">
+                ${statusText}
             </div>
 
         `;

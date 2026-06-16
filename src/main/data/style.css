@@ -413,6 +413,18 @@ CARDS
     padding-right: 5px;
 }
 
+.status-neutral
+{
+    color: #ffd166;
+    font-weight: bold;
+}
+
+.status-neutral
+{
+    color: #999;
+    font-weight: bold;
+}
+
 .employee-card {
 
     background: #1b1b1b;

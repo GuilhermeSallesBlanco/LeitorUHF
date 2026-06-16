@@ -20,14 +20,6 @@ async function verificarRFID()
             return;
         }
 
-        rfidStatus.textContent = "CONECTADO";
-        rfidStatus.className = "status-online";
-
-        if(uid === ultimoUIDRecebido)
-        {
-            return;
-        }
-
         ultimoUIDRecebido = uid;
 
         processRFID(uid);
