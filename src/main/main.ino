@@ -196,7 +196,7 @@ void loop() {
     }
   }
   if(millis() - lastPollTime > 100){
-    leitorUHF.poll(); // Envia um comando de leitura a cada 1 segundo
+    leitorUHF.poll(); // Envia um comando de leitura a cada 0.1 segundo
     lastPollTime = millis();
   }
   //delay(1000); 
