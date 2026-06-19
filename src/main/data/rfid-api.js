@@ -20,7 +20,7 @@ async function verificarRFID()
             return;
         }
 
-        ultimoUIDRecebido = uid;
+        //ultimoUIDRecebido = uid;
 
         processRFID(uid);
     }

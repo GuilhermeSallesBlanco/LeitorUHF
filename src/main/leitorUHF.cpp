@@ -108,18 +108,8 @@ void LeitorUHF::loop(){
             if(dataValid()){
                 switch(_buffer[2]){ // buffer[2] é frame[2], que deve ser o Command do frame recebido
                     case CMD_SinglePollInstruction:
-                        if(memcmp(uid, &_buffer[9], 12) != 0){
-                            novaLeitura = true;
-                            memcpy(uid, &_buffer[9], 12);
-                            // array[x] = uid + permissão + horário lido
-                            // array de structs?
-                            // colocar permissões/nome dentro de uma struct?
-                            //Serial.print("Tag lida: ");
-                            //dumpUIDToSerial();
-                        } else {
-                            Serial.println("Tag continua presente: ");
-                            dumpUIDToSerial();
-                        }
+                        memcpy(uid, &_buffer[9], 12);
+                        novaLeitura = true;
                         break;
                     case CMD_ExecutionFailure:
                         switch(_buffer[ParamPos]){

@@ -102,10 +102,10 @@ void handleRFIDAPI(){
 }
 
 void handleRFID() {
-  server.send(200, "text/plain", ultimoUIDLido);
+  String uid = ultimoUIDLido;
+  ultimoUIDLido = "";
 
-  // limpa após enviar
-  // ultimoUIDLido = "";
+  server.send(200, "text/plain", uid);
 }
 
 String uidParaString(const uint8_t* uid) {
@@ -195,7 +195,7 @@ void loop() {
       } 
     }
   }
-  if(millis() - lastPollTime > 1000){
+  if(millis() - lastPollTime > 100){
     leitorUHF.poll(); // Envia um comando de leitura a cada 1 segundo
     lastPollTime = millis();
   }

@@ -48,7 +48,7 @@ let currentCaseIndex = 0;
 
 const activeEmployees = [];
 const accessHistory = [];
-const RFID_TIMEOUT = 5000; // 5 segundos
+const RFID_TIMEOUT = 15000; // 5 segundos
 
 let shouldAutoScrollEmployees = true;
 
