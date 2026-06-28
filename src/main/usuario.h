@@ -20,6 +20,8 @@ struct Usuario{
     char nome[100]; // Nome do usuário
     char cargo[50]; // Cargo do usuário
     NivelPermissao permissao; // Nível de permissão do usuário
+
+    uint32_t contadorLeituras = 0;
 };
 
 bool compararUID(const uint8_t *uid1, const uint8_t *uid2);

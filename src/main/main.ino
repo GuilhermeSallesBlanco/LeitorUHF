@@ -6,12 +6,20 @@
 #include <WebServer.h>
 #include <LittleFS.h>
 
+#define MODO_TESTE 0 // 1 para ativar modo de teste, 0 para desativar
+
 const char* ssid = "TCCRede";
 const char* password = "12345678";
 
 unsigned long lastPollTime = 0;
 LeitorUHF leitorUHF;
 WebServer server(80);
+
+unsigned long inicioTeste = 0;
+const unsigned long DURACAO_TESTE = 60000; // 60 segundos
+
+bool testeIniciado = false;
+bool resultadoImpresso = false;
 
 String ultimoUIDLido = "";
 
@@ -124,6 +132,22 @@ String uidParaString(const uint8_t* uid) {
   return resultado;
 }
 
+void reiniciarTeste() {
+    inicioTeste = millis();
+    resultadoImpresso = false;
+    testeIniciado = true;
+
+    for (int i = 0; i < 6; i++) {
+        usuarios[i].contadorLeituras = 0;
+    }
+
+    Serial.println();
+    Serial.println("==================================");
+    Serial.println("NOVO TESTE INICIADO");
+    Serial.println("Duracao: 60 segundos");
+    Serial.println("==================================");
+}
+
 void setup() {
   Serial.begin(115200); // Inicia o monitor serial
   leitorUHF.begin(&Serial2, 115200, 16, 17); // Inicia o leitor
@@ -170,6 +194,8 @@ void setup() {
   server.begin();
 
   Serial.println("Servidor HTTP iniciado");
+
+  reiniciarTeste();
 }
 
 void loop() {
@@ -177,20 +203,24 @@ void loop() {
   leitorUHF.loop();
   if(leitorUHF.novaLeitura){
     leitorUHF.novaLeitura = false;
-    Serial.println("Nova leitura detectada, comparando com usuários cadastrados...");
+    //Serial.println("Nova leitura detectada, comparando com usuários cadastrados...");
     for(int i = 0; i < 6; i++){
       if(compararUID(usuarios[i].uid, leitorUHF.uid)){
+        usuarios[i].contadorLeituras++;
         ultimoUIDLido = uidParaString(leitorUHF.uid);
+        #if !MODO_TESTE
         Serial.print("Usuário identificado: ");
         Serial.print(usuarios[i].nome);
         Serial.print(" - Cargo: ");
         Serial.print(usuarios[i].cargo);
         Serial.println();
+        #endif
         break;
       } else if (i == 5){
+        #if !MODO_TESTE
         Serial.print("Usuário desconhecido. UID lido: ");
         leitorUHF.dumpUIDToSerial();
-        // Manda um sinal pro front end indicando que o usuário é desconhecido, junto com o UID lido.
+        #endif
         break;
       } 
     }
@@ -199,6 +229,49 @@ void loop() {
     leitorUHF.poll(); // Envia um comando de leitura a cada 0.1 segundo
     lastPollTime = millis();
   }
+  
+  #if MODO_TESTE
+  if(testeIniciado && !resultadoImpresso && (millis() - inicioTeste >= DURACAO_TESTE)){
+    resultadoImpresso = true;
+    Serial.println();
+    Serial.println("========== RESULTADO ==========");
+
+    uint32_t total = 0;
+
+    for(int i = 0; i < 6; i++)
+        total += usuarios[i].contadorLeituras;
+
+    for(int i = 0; i < 6; i++)
+    {
+        Serial.print(usuarios[i].nome);
+        Serial.print(": ");
+
+        Serial.print(usuarios[i].contadorLeituras);
+
+        if(total > 0)
+        {
+            float porcentagem =
+                100.0 * usuarios[i].contadorLeituras / total;
+
+            Serial.print(" (");
+            Serial.print(porcentagem,1);
+            Serial.print("%)");
+        }
+
+        Serial.println();
+    }
+
+    Serial.print("Total de leituras: ");
+    Serial.println(total);
+
+    Serial.println("==============================");
+
+    delay(2000);
+
+    reiniciarTeste();
+  }
+  #endif 
+
   //delay(1000); 
   // Delay removido para evitar conflitos. O comando de leitura já é controlado por um timer, então não é necessário um delay adicional aqui.
 }
